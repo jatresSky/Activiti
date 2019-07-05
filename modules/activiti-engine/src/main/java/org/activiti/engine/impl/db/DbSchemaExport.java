@@ -18,7 +18,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -51,9 +50,8 @@ public class DbSchemaExport {
     String jdbcPassword = properties.getProperty("jdbc.password");
     
     Class.forName(jdbcDriver);
-    Connection connection = null;
+    Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
     try {
-      connection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
       DatabaseMetaData meta = connection.getMetaData();
       
       SortedSet<String> tableNames = new TreeSet<String>();
@@ -94,12 +92,7 @@ public class DbSchemaExport {
 
     } catch (Exception e) {
       e.printStackTrace();
-    } finally {
-      if (connection != null) {
-        try {
-          connection.close();
-        } catch (SQLException e) { /* ignored */}
-      }
+      connection.close();
     }
   }
 }

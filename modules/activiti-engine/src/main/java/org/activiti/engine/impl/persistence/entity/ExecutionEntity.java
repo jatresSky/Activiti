@@ -159,9 +159,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
   
   protected boolean deleteRoot;
   protected String deleteReason;
-
-  protected boolean executeListeners = true;
-
+  
   // replaced by //////////////////////////////////////////////////////////////
   
   /** when execution structure is pruned during a takeAll, then 
@@ -1346,7 +1344,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
   }
 
   protected void ensureEventSubscriptionsInitialized() {
-    if (eventSubscriptions == null || eventSubscriptions.isEmpty()) {
+    if (eventSubscriptions == null) {
       eventSubscriptions = Context.getCommandContext()
         .getEventSubscriptionEntityManager()
         .findEventSubscriptionsByExecution(id);
@@ -1610,12 +1608,7 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
   public void disposeStartingExecution() {
     startingExecution = null;
   }
-
-  @Override
-  public boolean shouldExecuteListeners() {
-    return executeListeners;
-  }
-
+  
   public String getCurrentActivityId() {
     return activityId;
   }
@@ -1730,8 +1723,5 @@ public class ExecutionEntity extends VariableScopeImpl implements ActivityExecut
     getIdentityLinks().removeAll(identityLinks);
 
   }
-
-  public void setExecuteListeners(boolean executeListeners) {
-    this.executeListeners = executeListeners;
-  }
+  
 }

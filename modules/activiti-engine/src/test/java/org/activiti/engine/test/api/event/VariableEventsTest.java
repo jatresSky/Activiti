@@ -295,12 +295,13 @@ public class VariableEventsTest extends PluggableActivitiTestCase {
 		// Check delete event
 		event = (ActivitiVariableEvent) listener.getEventsReceived().get(2);
 		assertEquals(ActivitiEventType.VARIABLE_DELETED, event.getType());
-		assertEquals(processInstance.getProcessDefinitionId(), event.getProcessDefinitionId());
+    // process definition Id can't be recognized in  DB flush
+		assertEquals(null, event.getProcessDefinitionId());
 		assertEquals(processInstance.getId(), event.getExecutionId());
 		assertEquals(processInstance.getId(), event.getProcessInstanceId());
 		assertEquals(task.getId(), event.getTaskId());
 		assertEquals("variable", event.getVariableName());
-		// deleted variable value is always null
+    // deleted variable value is always null
 		assertEquals(null, event.getVariableValue());
 	}
 

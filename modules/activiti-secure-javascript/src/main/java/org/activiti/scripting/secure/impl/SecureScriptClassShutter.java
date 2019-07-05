@@ -12,9 +12,9 @@
  */
 package org.activiti.scripting.secure.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import org.activiti.tasks.secure.impl.ClassWhitelister;
 import org.mozilla.javascript.ClassShutter;
 
 /**
@@ -22,28 +22,34 @@ import org.mozilla.javascript.ClassShutter;
  * that are white listed for usage in scripts.
  * 
  * @author Joram Barrez
- * @author Bassam Al-Sarori
  */
 public class SecureScriptClassShutter implements ClassShutter {
 
     /**
-     * An implementation of {@link ClassWhitelister}
-     * if set will be used to determine whether 
-     * a class is visible for scripts or not
+     * A collection of whitelisted classnames.
+     * For each Java class used in a script, this collection will be checked.
      */
-    protected ClassWhitelister classWhitelister;
+    protected Set<String> whiteListedClasses = new HashSet<String>();
 
     @Override
-    public boolean visibleToScripts(String fqcn) {
-        return classWhitelister.isWhitelisted(fqcn);
-    }
-    
-    public ClassWhitelister getClassWhitelister() {
-      return classWhitelister;
+    public boolean visibleToScripts(String fullClassName) {
+        return whiteListedClasses.contains(fullClassName);
     }
 
-    public void setClassWhitelister(ClassWhitelister classWhitelister) {
-      this.classWhitelister = classWhitelister;
+    public void addWhiteListedClass(String fqcn) {
+        whiteListedClasses.add(fqcn);
+    }
+    
+    public void removeWhiteListedClass(String fqcn) {
+      whiteListedClasses.remove(fqcn);
+  }
+
+    public Set<String> getWhiteListedClasses() {
+        return whiteListedClasses;
+    }
+
+    public void setWhiteListedClasses(Set<String> whiteListedClasses) {
+        this.whiteListedClasses = whiteListedClasses;
     }
 
 }

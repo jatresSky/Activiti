@@ -2,27 +2,26 @@ package org.activiti.engine.test.logging.mdc;
 
 import java.io.StringWriter;
 
-import ch.qos.logback.core.OutputStreamAppender;
-import org.apache.commons.io.output.WriterOutputStream;
+import org.apache.log4j.ConsoleAppender;
 
 /**
  * @author Saeid Mirzaei
  */
-public class MemoryLogAppender<E> extends OutputStreamAppender<E> {
 
-    StringWriter stringWriter = new StringWriter();
+public class MemoryLogAppender extends ConsoleAppender {
 
-    @Override
-    public void start() {
-        this.setOutputStream(new WriterOutputStream(stringWriter));
-        super.start();
-    }
+  StringWriter stringWriter = new StringWriter();
 
-    public String toString() {
-        return stringWriter.toString();
-    }
+  public void activateOptions() {
+    setWriter(stringWriter);
+  }
 
-    public void clear() {
-        stringWriter = new StringWriter();
-    }
+  public String toString() {
+    return stringWriter.toString();
+  }
+
+  public void clear() {
+    stringWriter = new StringWriter();
+  }
+
 }

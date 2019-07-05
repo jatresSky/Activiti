@@ -58,7 +58,6 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   protected String assigneeLike;
   protected String assigneeLikeIgnoreCase;
   protected String involvedUser;
-  protected List<String> involvedGroups;
   protected String owner;
   protected String ownerLike;
   protected String ownerLikeIgnoreCase;
@@ -449,20 +448,6 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
     } else {
       this.involvedUser = involvedUser;
     }
-    return this;
-  }
-
-  public TaskQueryImpl taskInvolvedGroupsIn(List<String> involvedGroups) {
-    if (involvedGroups == null || involvedGroups.isEmpty()) {
-      throw new ActivitiIllegalArgumentException("Involved groups list is null or empty.");
-    }
-
-    if (orActive) {
-      currentOrQueryObject.involvedGroups = involvedGroups;
-    } else {
-      this.involvedGroups = involvedGroups;
-    }
-
     return this;
   }
   
@@ -1445,10 +1430,6 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
 
   public String getInvolvedUser() {
     return involvedUser;
-  }
-
-  public List<String> getInvolvedGroups() {
-    return involvedGroups;
   }
 
   public String getOwner() {

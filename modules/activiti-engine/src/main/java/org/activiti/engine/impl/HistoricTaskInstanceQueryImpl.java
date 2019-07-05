@@ -79,7 +79,6 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
   protected String candidateGroup;
   private List<String> candidateGroups;
   protected String involvedUser;
-  protected List<String> involvedGroups;
   protected Integer taskPriority;
   protected Integer taskMinPriority;
   protected Integer taskMaxPriority;
@@ -122,11 +121,7 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
     this.databaseType = databaseType;
   }
 
-  public HistoricTaskInstanceQueryImpl(CommandContext commandContext) {
-	super(commandContext);
-  }
-
-@Override
+  @Override
   public long executeCount(CommandContext commandContext) {
     ensureVariablesInitialized();
     checkQueryOk();
@@ -1051,20 +1046,6 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
     }
     return this;
   }
-
-  @Override
-  public HistoricTaskInstanceQuery taskInvolvedGroupsIn(List<String> involvedGroups) {
-    if (involvedGroups == null || involvedGroups.isEmpty()) {
-      throw new ActivitiIllegalArgumentException("Involved groups list is null or empty.");
-    }
-
-    if (inOrStatement) {
-      this.currentOrQueryObject.involvedGroups = involvedGroups;
-    } else {
-      this.involvedGroups = involvedGroups;
-    }
-    return this;
-  }
   
   public HistoricTaskInstanceQuery taskTenantId(String tenantId) {
   	if (tenantId == null) {
@@ -1480,9 +1461,6 @@ public class HistoricTaskInstanceQueryImpl extends AbstractVariableQueryImpl<His
   }
   public String getInvolvedUser() {
     return involvedUser;
-  }
-  public List<String> getInvolvedGroups() {
-    return involvedGroups;
   }
 	public String getProcessDefinitionKeyLikeIgnoreCase() {
 		return processDefinitionKeyLikeIgnoreCase;

@@ -47,7 +47,7 @@ public class MuleHttpBasicAuthTest extends AbstractMuleTest {
   }
   
   @Override
-  protected String getConfigFile() {
+  protected String getConfigResources() {
     return "mule-http-basicauth-config.xml";
   }
 }

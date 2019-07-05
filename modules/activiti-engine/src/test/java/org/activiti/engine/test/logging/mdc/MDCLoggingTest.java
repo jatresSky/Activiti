@@ -1,76 +1,87 @@
 package org.activiti.engine.test.logging.mdc;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.activiti.engine.test.Deployment;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 public class MDCLoggingTest extends PluggableActivitiTestCase {
 
-    private Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+	MemoryLogAppender console = new MemoryLogAppender();
+	List<Appender> appenders = null;
 
-    MemoryLogAppender console = new MemoryLogAppender();
+	private void setCustomLogger() {
+		String PATTERN = "Modified Log *** ProcessDefinitionId=%X{mdcProcessDefinitionID} executionId=%X{mdcExecutionId} mdcProcessInstanceID=%X{mdcProcessInstanceID} mdcBusinessKey=%X{mdcBusinessKey} mdcTaskId=%X{mdcTaskId}  %m%n";
+		console.setLayout(new PatternLayout(PATTERN));
+		console.setThreshold(Level.DEBUG);
+		console.activateOptions();
+		console.setName("MemoryAppender");
 
-    private void setCustomLogger() {
-        LoggerContext loggerContext = rootLogger.getLoggerContext();
-        // we are not interested in auto-configuration
-        loggerContext.reset();
+		appenders = new ArrayList<Appender>();
+		Enumeration<?> appendersEnum = Logger.getRootLogger().getAllAppenders();
 
-        final String PATTERN = "Modified Log *** ProcessDefinitionId=%X{mdcProcessDefinitionID} executionId=%X{mdcExecutionId} mdcProcessInstanceID=%X{mdcProcessInstanceID} mdcBusinessKey=%X{mdcBusinessKey} mdcTaskId=%X{mdcTaskId}  %m%n";
+		while (appendersEnum.hasMoreElements()) {
+			Appender object = (Appender) appendersEnum.nextElement();
+			appenders.add(object);
+		}
 
-        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-        encoder.setContext(loggerContext);
-        encoder.setPattern(PATTERN);
-        encoder.start();
+		removeAppenders();
 
-        console.setContext(loggerContext);
-        console.setEncoder(encoder);
-        console.start();
+		Logger.getRootLogger().addAppender(console);
+	}
 
-        console.setEncoder(encoder);
-        console.setName("MemoryAppender");
+	private void removeAppenders() {
+		Enumeration<?> appendersEnum = Logger.getRootLogger().getAllAppenders();
+		while (appendersEnum.hasMoreElements()) {
+			Appender object = (Appender) appendersEnum.nextElement();
+			Logger.getRootLogger().removeAppender(object);
+		}
+	}
 
-        rootLogger.addAppender(console);
-    }
+	private void restoreLoggers() {
+		removeAppenders();
 
-    private void unsetCustomLogger() {
-        rootLogger.detachAppender(console);
-    }
+		for (Appender appender : appenders) {
+			Logger.getRootLogger().addAppender(appender);
+		}
+	}
 
-    @Deployment
-    public void testLogger() {
-        setCustomLogger();
+	@Deployment
+	public void testLogger() {
+		setCustomLogger();
 
-        try {
-            runtimeService.startProcessInstanceByKey("testLoggerProcess");
-            fail("Expected exception");
-        } catch (Exception e) {
-            // expected exception
-        }
-        String messages = console.toString();
+		try {
+			runtimeService.startProcessInstanceByKey("testLoggerProcess");
+			fail("Expected exception");
+		} catch (Exception e) {
+			// expected exception
+		}
+		String messages = console.toString();
+		
+		assertTrue(messages.contains("ProcessDefinitionId="
+				+ TestService.processDefinitionId));
+		assertTrue(messages.contains("executionId=" + TestService.executionId));
+		assertTrue(messages.contains("mdcProcessInstanceID="
+				+ TestService.processInstanceId));
+		assertTrue(messages.contains("mdcBusinessKey="
+				+ (TestService.businessKey == null ? ""
+						: TestService.businessKey)));
+		console.clear();
+		restoreLoggers();
 
-        assertTrue(messages.contains("ProcessDefinitionId="
-                + TestService.processDefinitionId));
-        assertTrue(messages.contains("executionId=" + TestService.executionId));
-        assertTrue(messages.contains("mdcProcessInstanceID="
-                + TestService.processInstanceId));
-        assertTrue(messages.contains("mdcBusinessKey="
-                + (TestService.businessKey == null ? ""
-                : TestService.businessKey)));
-
-        console.clear();
-
-        unsetCustomLogger();
-
-        try {
-            runtimeService.startProcessInstanceByKey("testLoggerProcess");
-            fail("Expected exception");
-        } catch (Exception e) {
-            // expected exception
-        }
-        assertFalse(console.toString().contains(
-                "ProcessDefinitionId=" + TestService.processDefinitionId));
-    }
+		try {
+			runtimeService.startProcessInstanceByKey("testLoggerProcess");
+			fail("Expected exception");
+		} catch (Exception e) {
+			// expected exception
+		}
+		assertFalse(console.toString().contains(
+				"ProcessDefinitionId=" + TestService.processDefinitionId));
+	}
 }

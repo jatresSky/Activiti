@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 import junit.framework.Test;
 
 import org.activiti.spring.impl.test.SpringActivitiTestCase;
-import org.springframework.security.ldap.server.UnboundIdContainer;
+import org.springframework.security.ldap.server.ApacheDSContainer;
 
 /**
  * Parts of this class come from
@@ -34,8 +34,8 @@ public class LDAPTestCase extends SpringActivitiTestCase {
   private static int totalTestCount = -1;
   private static boolean disableAfterTestCase = false;
   
-  @Resource(name="org.springframework.security.unboundIdContainer")
-  private UnboundIdContainer unboundIdContainer;
+  @Resource(name="org.springframework.security.apacheDirectoryServerContainer")
+  private ApacheDSContainer apacheDSContainer;
 
   protected LDAPTestCase() {
     super();
@@ -84,7 +84,7 @@ public class LDAPTestCase extends SpringActivitiTestCase {
   protected void afterTestCase() throws Exception {
     // Need to do this 'manually', or otherwise the ldap server won't be shut down properly
     // on the QA machine, failing the next tests
-    unboundIdContainer.stop();
+    apacheDSContainer.stop();
   }
 
   private int countTotalTests() {

@@ -38,16 +38,9 @@ public abstract class ResourceActivitiTestCase extends AbstractActivitiTestCase 
 
   @Override
   protected void initializeProcessEngine() {
-    ProcessEngineConfiguration configuration = ProcessEngineConfiguration
-        .createProcessEngineConfigurationFromResource(activitiConfigurationResource);
-
-    // overwrite jdbc config from system properties if available
-    configuration.setJdbcUrl(System.getProperty("jdbc.url", configuration.getJdbcUrl()));
-    configuration.setJdbcDriver(System.getProperty("jdbc.driver", configuration.getJdbcDriver()));
-    configuration.setJdbcUsername(System.getProperty("jdbc.username", configuration.getJdbcUsername()));
-    configuration.setJdbcPassword(System.getProperty("jdbc.password", configuration.getJdbcPassword()));
-
-    processEngine = configuration.buildProcessEngine();
+    processEngine = ProcessEngineConfiguration
+            .createProcessEngineConfigurationFromResource(activitiConfigurationResource)
+            .buildProcessEngine();
   }
 
 }

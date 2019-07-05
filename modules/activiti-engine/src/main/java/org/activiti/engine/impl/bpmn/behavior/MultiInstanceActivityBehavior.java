@@ -164,12 +164,10 @@ public abstract class MultiInstanceActivityBehavior extends FlowNodeActivityBeha
        
       Object value = null;
       int index = 0;
-      if(collection!=null) {
-        Iterator it = collection.iterator();
-        while (index <= loopCounter) {
-          value = it.next();
-          index++;
-        }
+      Iterator it = collection.iterator();
+      while (index <= loopCounter) {
+        value = it.next();
+        index++;
       }
       setLoopVariable(execution, collectionElementVariable, value);
     }

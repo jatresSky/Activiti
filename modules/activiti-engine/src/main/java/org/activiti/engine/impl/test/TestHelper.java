@@ -207,22 +207,11 @@ public abstract class TestHelper {
   public static String getBpmnProcessDefinitionResource(Class< ? > type, String name) {
     for (String suffix : BpmnDeployer.BPMN_RESOURCE_SUFFIXES) {
       String resource = type.getName().replace('.', '/') + "." + name + "." + suffix;
-      InputStream inputStream = null;
-      try {
-        inputStream = ReflectUtil.getResourceAsStream(resource);
-        if (inputStream == null) {
-          continue;
-        } else {
-          return resource;
-        }
-      }finally{
-        if(inputStream!=null){
-          try{
-            inputStream.close();
-          } catch (Exception ex){
-            //ignored
-          }
-        }
+      InputStream inputStream = ReflectUtil.getResourceAsStream(resource);
+      if (inputStream == null) {
+        continue;
+      } else {
+        return resource;
       }
     }
     return type.getName().replace('.', '/') + "." + name + "." + BpmnDeployer.BPMN_RESOURCE_SUFFIXES[0];

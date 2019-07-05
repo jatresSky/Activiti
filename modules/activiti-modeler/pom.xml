@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  
   <name>Activiti - Modeler</name>
   <artifactId>activiti-modeler</artifactId>
   <packaging>jar</packaging>
 
   <parent>
     <groupId>org.activiti</groupId>
-    <artifactId>activiti-parent</artifactId>
-    <version>5.23.0</version>
-    <relativePath>../activiti-parent</relativePath>
+    <artifactId>activiti-root</artifactId>
+    <relativePath>../..</relativePath>
+    <version>5.22.0</version>
   </parent>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <activiti.artifact>
       org.activiti.modeler
     </activiti.artifact>
   </properties>
-
+  
   <repositories>
     <repository>
       <id>maven-restlet</id>
@@ -32,6 +33,13 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -105,9 +113,9 @@
       <groupId>org.activiti</groupId>
       <artifactId>activiti-json-converter</artifactId>
     </dependency>
-
+    
     <!-- Editor -->
-
+    
     <!-- SPRING -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -145,7 +153,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
     </dependency>
-
+    
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -161,16 +169,28 @@
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-transcoder</artifactId>
-      <!-- Need to exclude this old version of xml-apis, as it causes exceptions on older JDK versions -->
+       <!-- Need to exclude this old version of xml-apis, as it causes exceptions on older JDK versions -->
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
           <artifactId>xml-apis</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>xalan</artifactId>
-          <groupId>xalan</groupId>
+        	<artifactId>xalan</artifactId>
+        	<groupId>xalan</groupId>
         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-bridge</artifactId>
+      <!-- Need to exclude this old version of xalan, as it causes exceptions on older JDK versions -->
+
+      <exclusions>
+      	<exclusion>
+      		<artifactId>xalan</artifactId>
+      		<groupId>xalan</groupId>
+      	</exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -189,13 +209,36 @@
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-svggen</artifactId>
     </dependency>
-
+    
     <!-- Testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
+	  <dependency>
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	  </dependency>
+   
   </dependencies>
+  
+  <profiles>
+    <profile>
+      <id>distro</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.1.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

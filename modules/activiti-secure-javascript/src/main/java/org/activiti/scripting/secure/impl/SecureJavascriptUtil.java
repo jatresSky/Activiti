@@ -12,28 +12,20 @@
  */
 package org.activiti.scripting.secure.impl;
 
-import java.util.Map;
-
 import org.activiti.engine.delegate.VariableScope;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 /**
  * @author Joram Barrez
- * @author Bassam Al-Sarori
  */
 public class SecureJavascriptUtil {
 
   public static Object evaluateScript(VariableScope variableScope, String script) {
-    return evaluateScript(variableScope, script, null);
-  }
-  
-  // exposes beans
-  public static Object evaluateScript(VariableScope variableScope, String script, Map<Object, Object> beans) {
     Context context = Context.enter();
     try {
         Scriptable scope = context.initStandardObjects();
-        SecureScriptScope secureScriptScope = new SecureScriptScope(variableScope, beans);
+        SecureScriptScope secureScriptScope = new SecureScriptScope(variableScope);
         scope.setPrototype(secureScriptScope);
 
         return context.evaluateString(scope, script, "<script>", 0, null);

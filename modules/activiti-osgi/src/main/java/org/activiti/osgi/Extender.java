@@ -362,17 +362,7 @@ public class Extender implements BundleTrackerCustomizer, ServiceTrackerCustomiz
     public ScriptEngine resolveScriptEngine(String name) {
       try {
         BufferedReader in = new BufferedReader(new InputStreamReader(configFile.openStream()));
-        String className;
-        while ((className = in.readLine()) != null) {
-          className = className.trim();
-          if (!className.isEmpty() && !className.startsWith("#")) {
-            final int idx = className.indexOf("#");
-            if (idx > 0) {
-              className = className.substring(0, idx).trim();
-            }
-            break;
-          }
-        }
+        String className = in.readLine();
         in.close();
         Class cls = bundle.loadClass(className);
         if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {

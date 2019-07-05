@@ -13,6 +13,9 @@
 
 package org.activiti.engine.test.api.runtime;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +38,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceBuilder;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.Deployment;
+
 
 /**
  * @author Frederik Heremans
@@ -978,12 +982,10 @@ public class RuntimeServiceTest extends PluggableActivitiTestCase {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("var1", true);
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("oneTaskProcess", params);
-
-        try {
-            runtimeService.getVariable(processInstance.getId(), "var1", String.class);
-            fail("should have thrown a ClassCastException");
-        } catch (ClassCastException e) {
-        }
+        catchException(runtimeService).getVariable(processInstance.getId(), "var1", String.class);
+        Exception e = caughtException();
+        assertNotNull(e);
+        assertTrue(e instanceof ClassCastException);
     }
 
     @Deployment(resources={
@@ -1010,12 +1012,10 @@ public class RuntimeServiceTest extends PluggableActivitiTestCase {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("var1", true);
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("oneTaskProcess", params);
-
-        try {
-            runtimeService.getVariableLocal(processInstance.getId(), "var1", String.class);
-            fail("should have thrown a ClassCastException");
-        } catch (ClassCastException e) {
-        }
+        catchException(runtimeService).getVariableLocal(processInstance.getId(), "var1", String.class);
+        Exception e = caughtException();
+        assertNotNull(e);
+        assertTrue(e instanceof ClassCastException);
     }
     
     // Test for https://activiti.atlassian.net/browse/ACT-2186

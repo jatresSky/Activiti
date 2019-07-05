@@ -30,6 +30,4 @@ public interface PvmProcessInstance extends PvmExecution {
   boolean isEnded();
 
   void deleteCascade(String deleteReason);
-
-  void setBusinessKey(String businessKey);
 }

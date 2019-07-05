@@ -47,7 +47,7 @@ public class MuleHttpTest extends AbstractMuleTest {
   }
   
   @Override
-  protected String getConfigFile() {
+  protected String getConfigResources() {
     return "mule-http-config.xml";
   }
 }
